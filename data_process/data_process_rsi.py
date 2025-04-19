@@ -157,26 +157,26 @@ class RSIDataProcessor:
         print(f"Dữ liệu sau khi chuẩn hóa có {len(normalized_df.columns)} cột")
         return normalized_df
     
-    def visualize_data(self, original_df, processed_df, symbol, plots_dir):
+    def visualize_data(self, original_df, processed_df, symbol):
         """
-        Vẽ biểu đồ phân tích dữ liệu RSI
-        Args:
-            original_df: DataFrame dữ liệu gốc
-            processed_df: DataFrame dữ liệu đã xử lý
-            symbol: Mã cổ phiếu
-        """
+    Vẽ biểu đồ phân tích dữ liệu RSI (chỉ hiển thị)
+    Args:
+        original_df: DataFrame dữ liệu gốc
+        processed_df: DataFrame dữ liệu đã xử lý
+        symbol: Mã cổ phiếu
+    """
         if original_df is None or processed_df is None:
             print("Không có dữ liệu để vẽ biểu đồ")
             return
-        
-        # Tạo figure với 4 subplots
+    
+    # Tạo figure với 4 subplots
         fig = plt.figure(figsize=(15, 18))
         fig.suptitle(f'Phân tích RSI cho {symbol}', fontsize=16)
-        
-        # Tạo grid layout
+    
+    # Tạo grid layout
         gs = fig.add_gridspec(4, 2)
-        
-        # 1. Biểu đồ dữ liệu gốc và sau xử lý
+    
+    # 1. Biểu đồ dữ liệu gốc và sau xử lý
         ax1 = fig.add_subplot(gs[0, :])
         rsi_col = [col for col in original_df.columns if 'rsi' in col.lower()]
         if rsi_col:
@@ -189,8 +189,8 @@ class RSIDataProcessor:
             ax1.set_ylabel('Giá trị RSI')
             ax1.legend()
             ax1.grid(True, alpha=0.3)
-        
-        # 2. Biểu đồ phân phối RSI
+    
+    # 2. Biểu đồ phân phối RSI
         ax2 = fig.add_subplot(gs[1, 0])
         if rsi_col:
             sns.histplot(original_df[rsi_col], kde=True, ax=ax2, color='blue', alpha=0.5, label='RSI gốc')
@@ -199,75 +199,61 @@ class RSIDataProcessor:
             ax2.set_xlabel('Giá trị RSI')
             ax2.set_ylabel('Tần suất')
             ax2.legend()
-        
-        # 3. Biểu đồ boxplot so sánh RSI trước và sau xử lý
+    
+    # 3. Biểu đồ boxplot so sánh RSI trước và sau xử lý
         ax3 = fig.add_subplot(gs[1, 1])
         if rsi_col:
             data_to_plot = pd.DataFrame({
                 'RSI gốc': original_df[rsi_col],
                 'RSI sau xử lý': processed_df[rsi_col]
-            })
+        })
             sns.boxplot(data=data_to_plot, ax=ax3)
             ax3.set_title('Boxplot so sánh RSI trước và sau xử lý')
             ax3.set_ylabel('Giá trị RSI')
-        
-        # 4. Biểu đồ RSI theo thời gian (heatmap theo năm)
+    
+    # 4. Biểu đồ RSI theo thời gian (heatmap theo năm)
         ax4 = fig.add_subplot(gs[2, :])
         if isinstance(processed_df.index, pd.DatetimeIndex) and rsi_col:
-            # Tạo DataFrame mới với cột năm và tháng
             heatmap_df = processed_df.reset_index()
             heatmap_df['Year'] = heatmap_df.iloc[:, 0].dt.year
             heatmap_df['Month'] = heatmap_df.iloc[:, 0].dt.month
-            
-            # Tính giá trị trung bình RSI theo năm và tháng
             pivot_df = heatmap_df.pivot_table(values=rsi_col, index='Year', columns='Month', aggfunc='mean')
-            
-            # Vẽ heatmap
             sns.heatmap(pivot_df, cmap='RdYlGn', ax=ax4, cbar_kws={'label': 'Giá trị RSI trung bình'})
             ax4.set_title('Heatmap RSI theo năm và tháng')
             ax4.set_xlabel('Tháng')
             ax4.set_ylabel('Năm')
-        
-        # 5. Biểu đồ phân tích xu hướng RSI theo thời gian
+    
+    # 5. Biểu đồ phân tích xu hướng RSI theo thời gian
         ax5 = fig.add_subplot(gs[3, :])
         if isinstance(processed_df.index, pd.DatetimeIndex) and rsi_col:
-            # Tính giá trị trung bình RSI theo năm
             yearly_rsi = processed_df.groupby(processed_df.index.year)[rsi_col].mean()
-            
-            # Vẽ biểu đồ xu hướng
             ax5.plot(yearly_rsi.index, yearly_rsi.values, marker='o', linestyle='-', linewidth=2, markersize=8)
             ax5.set_title('Xu hướng RSI trung bình theo năm')
             ax5.set_xlabel('Năm')
             ax5.set_ylabel('RSI trung bình')
             ax5.grid(True, alpha=0.3)
-            
-            # Thêm đường xu hướng
+        
+        # Thêm đường xu hướng
             z = np.polyfit(yearly_rsi.index, yearly_rsi.values, 1)
             p = np.poly1d(z)
-            ax5.plot(yearly_rsi.index, p(yearly_rsi.index), "r--", alpha=0.8, label=f'Đường xu hướng (y={z[0]:.4f}x+{z[1]:.4f})')
+            ax5.plot(yearly_rsi.index, p(yearly_rsi.index), "r--", alpha=0.8, 
+                    label=f'Đường xu hướng (y={z[0]:.4f}x+{z[1]:.4f})')
             ax5.legend()
-        
+    
         plt.tight_layout(rect=[0, 0, 1, 0.96])
-        
-        # Lưu biểu đồ
-        plot_dir = self.plots_dir
-        plot_dir.mkdir(exist_ok=True)
-        plt.savefig(plot_dir / f"{symbol}_rsi_analysis.png", dpi=300, bbox_inches='tight')
-        print(f"Đã lưu biểu đồ phân tích vào: {plot_dir / f'{symbol}_rsi_analysis.png'}")
-        
         plt.show()
     
     def process_all_files(self):
         """Xử lý tất cả các file RSI trong thư mục"""
     # Tìm tất cả các file CSV trong thư mục
         csv_files = list(self.rsi_dir.glob("*.csv"))
-    
+
         if not csv_files:
             print("\nKhông tìm thấy file CSV nào trong thư mục data/technical_data/rsi")
             return
-    
+
         for file_path in csv_files:
-        # Lấy tên file và symbol
+         # Lấy tên file và symbol
             file_name = file_path.name
             symbol = file_name.split('_')[0] if '_' in file_name else file_name.split('.')[0]
         
@@ -292,25 +278,20 @@ class RSIDataProcessor:
         # Kiểm tra lại một lần nữa để đảm bảo chỉ có dữ liệu từ 2004
             if isinstance(processed_df.index, pd.DatetimeIndex):
                 processed_df = processed_df[processed_df.index.year >= self.min_year]
-            
+        
         # Lưu dữ liệu đã xử lý
             output_path = self.processed_dir / f"{symbol}_rsi_processed.csv"
             processed_df.to_csv(output_path)
             print(f"Đã lưu dữ liệu đã xử lý từ năm {self.min_year} vào: {output_path}")
         
         # Kiểm tra và hiển thị khoảng thời gian của dữ liệu
-            try:
-                if isinstance(processed_df.index, pd.DatetimeIndex):
-                    start_year = processed_df.index.min().year
-                    end_year = processed_df.index.max().year
-                    print(f"Khoảng thời gian dữ liệu: {start_year} - {end_year}")
-                else:
-                    print("Index không phải là định dạng datetime")
-            except Exception as e:
-                print(f"Không thể xác định khoảng thời gian dữ liệu: {str(e)}")
+            if isinstance(processed_df.index, pd.DatetimeIndex):
+                start_year = processed_df.index.min().year
+                end_year = processed_df.index.max().year
+                print(f"Khoảng thời gian dữ liệu: {start_year} - {end_year}")
         
         # Vẽ biểu đồ phân tích
-            self.visualize_data(original_df, processed_df, symbol, self.plots_dir)
+            self.visualize_data(original_df, processed_df, symbol)
 
 def main():
     processor = RSIDataProcessor()

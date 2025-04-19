@@ -1,222 +1,177 @@
-
 import pandas as pd
 import numpy as np
-from pathlib import Path
-import os
-from datetime import datetime
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.preprocessing import StandardScaler
+from pathlib import Path
+from sklearn.preprocessing import MinMaxScaler
+import warnings
+warnings.filterwarnings('ignore')
 
-def setup_directories():
-    """Thiết lập các thư mục cần thiết"""
-    base_dir = Path("data/volume_data")
-    processed_dir = Path("data/processed_data")
-    plots_dir = Path("data/visualizations")
-    
-    # Tạo các thư mục nếu chưa tồn tại
-    for dir_path in [base_dir, processed_dir, plots_dir]:
-        dir_path.mkdir(parents=True, exist_ok=True)
-    
-    return base_dir, processed_dir, plots_dir
+class OBVDataProcessor:
+    def __init__(self, start_year=2004):
+        """
+        Khởi tạo processor với các thư mục cần thiết
+        """
+        self.start_year = start_year
+        self.data_dir = Path("data/volume_data")
+        self.processed_dir = Path("data/processed_data")
+        self.processed_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Set style cho matplotlib
+        plt.style.use('default')  # Sử dụng style mặc định thay vì seaborn
+        sns.set_theme(style="whitegrid")  # Sử dụng seaborn theme
 
-def load_nasdaq_data(file_path):
-    """
-    Đọc và xử lý dữ liệu NASDAQ
-    Args:
-        file_path: đường dẫn đến file dữ liệu
-    Returns:
-        DataFrame: dữ liệu đã được đọc và xử lý sơ bộ
-    """
-    try:
-        # Đọc file CSV
-        df = pd.read_csv(file_path)
+    def load_data(self, file_path):
+        """
+        Load dữ liệu OBV và chỉ giữ lại các cột cần thiết
+        """
+        try:
+            df = pd.read_csv(file_path)
+            
+            # Chuyển đổi timestamp
+            df['Timestamp'] = pd.to_datetime(df['timestamp'])
+            
+            # Chỉ giữ lại cột Timestamp và OBV
+            df = df[['Timestamp', 'obv']]
+            
+            # Lọc dữ liệu từ năm start_year
+            df = df[df['Timestamp'].dt.year >= self.start_year]
+            
+            # Sắp xếp theo thời gian
+            df = df.sort_values('Timestamp')
+            
+            return df
+        except Exception as e:
+            print(f"Lỗi khi đọc file: {str(e)}")
+            return None
+
+    def remove_outliers(self, df):
+        """
+        Loại bỏ outliers sử dụng phương pháp IQR
+        """
+        df_clean = df.copy()
         
-        # Chuyển đổi cột ngày tháng nếu có
-        date_columns = df.select_dtypes(include=['object']).columns
-        for col in date_columns:
-            if 'date' in col.lower() or 'time' in col.lower():
-                df[col] = pd.to_datetime(df[col])
-                # Đặt cột ngày làm index
-                df.set_index(col, inplace=True)
+        # Tính toán thống kê rolling
+        rolling_q1 = df['obv'].rolling(window=20, min_periods=1).quantile(0.25)
+        rolling_q3 = df['obv'].rolling(window=20, min_periods=1).quantile(0.75)
+        rolling_iqr = rolling_q3 - rolling_q1
+        rolling_median = df['obv'].rolling(window=20, min_periods=1).median()
         
-        # Lọc dữ liệu từ năm 2004
-        df = df[df.index >= '2004-01-01']
+        # Xác định outliers
+        lower_bound = rolling_q1 - 1.5 * rolling_iqr
+        upper_bound = rolling_q3 + 1.5 * rolling_iqr
         
-        print(f"\nĐã đọc thành công file: {file_path}")
-        print(f"Số lượng dòng dữ liệu: {len(df)}")
-        print(f"Thời gian từ: {df.index.min()} đến {df.index.max()}")
+        # Thay thế outliers bằng giá trị trung vị
+        outlier_mask = (df['obv'] < lower_bound) | (df['obv'] > upper_bound)
+        df_clean.loc[outlier_mask, 'obv'] = rolling_median[outlier_mask]
         
+        return df_clean
+
+    def normalize_data(self, df):
+        """
+        Chuẩn hóa dữ liệu OBV về khoảng [0,1]
+        """
+        scaler = MinMaxScaler()
+        df['obv_normalized'] = scaler.fit_transform(df[['obv']])
         return df
-    except Exception as e:
-        print(f"\nLỗi khi đọc file {file_path}: {str(e)}")
-        return None
 
-def clean_nasdaq_data(df):
-    """
-    Làm sạch dữ liệu NASDAQ
-    Args:
-        df: DataFrame cần xử lý
-    Returns:
-        DataFrame: dữ liệu đã được làm sạch
-    """
-    # Xử lý giá trị bị thiếu
-    missing_values = df.isnull().sum()
-    print("\nSố lượng giá trị bị thiếu:")
-    print(missing_values[missing_values > 0])
-    
-    # Thay thế giá trị bị thiếu
-    numeric_columns = df.select_dtypes(include=[np.number]).columns
-    df[numeric_columns] = df[numeric_columns].fillna(df[numeric_columns].mean())
-    
-    # Xử lý giá trị ngoại lai cho các cột số
-    for column in numeric_columns:
-        Q1 = df[column].quantile(0.25)
-        Q3 = df[column].quantile(0.75)
-        IQR = Q3 - Q1
-        lower_bound = Q1 - 1.5 * IQR
-        upper_bound = Q3 + 1.5 * IQR
-        df[column] = df[column].clip(lower_bound, upper_bound)
-    
-    return df
+    def plot_analysis(self, df, symbol):
+        """
+        Tạo các biểu đồ phân tích
+        """
+        # 1. Time Series Plot
+        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(15, 10))
+        
+        ax1.plot(df['Timestamp'], df['obv'], label='Original OBV', color='blue', alpha=0.7)
+        ax1.set_title(f'OBV Time Series for {symbol}')
+        ax1.set_xlabel('Date')
+        ax1.set_ylabel('OBV Value')
+        ax1.legend()
+        ax1.grid(True)
+        
+        ax2.plot(df['Timestamp'], df['obv_normalized'], label='Normalized OBV', 
+                color='orange')
+        ax2.set_title('Normalized OBV')
+        ax2.set_xlabel('Date')
+        ax2.set_ylabel('Normalized Value')
+        ax2.legend()
+        ax2.grid(True)
+        
+        plt.tight_layout()
+        plt.show()
+        
+        # 2. Distribution Plot
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
+        
+        sns.histplot(data=df, x='obv', kde=True, ax=ax1)
+        ax1.set_title('OBV Distribution')
+        
+        sns.histplot(data=df, x='obv_normalized', kde=True, ax=ax2)
+        ax2.set_title('Normalized OBV Distribution')
+        
+        plt.tight_layout()
+        plt.show()
+        
+        # 3. Rolling Statistics
+        window = 20
+        rolling_mean = df['obv'].rolling(window=window).mean()
+        rolling_std = df['obv'].rolling(window=window).std()
+        
+        plt.figure(figsize=(15, 7))
+        plt.plot(df['Timestamp'], df['obv'], label='OBV', alpha=0.5)
+        plt.plot(df['Timestamp'], rolling_mean, label=f'{window}-day MA', 
+                color='red', linewidth=2)
+        plt.fill_between(df['Timestamp'], 
+                        rolling_mean - 2*rolling_std,
+                        rolling_mean + 2*rolling_std,
+                        color='gray', alpha=0.2, label='±2σ Band')
+        plt.title(f'OBV with Rolling Statistics ({window}-day window)')
+        plt.xlabel('Date')
+        plt.ylabel('Value')
+        plt.legend()
+        plt.grid(True)
+        plt.show()
 
-def process_volume_data(df):
-    """
-    Xử lý dữ liệu volume
-    Args:
-        df: DataFrame cần xử lý
-    Returns:
-        DataFrame: dữ liệu đã được xử lý
-    """
-    # Chuẩn hóa dữ liệu volume
-    volume_columns = [col for col in df.columns if 'volume' in col.lower()]
-    if volume_columns:
-        scaler = StandardScaler()
-        df[volume_columns] = scaler.fit_transform(df[volume_columns])
-    
-    return df
-
-def create_visualizations(df_original, df_processed, plots_dir, file_name):
-    """
-    Tạo các biểu đồ phân tích
-    Args:
-        df_original: DataFrame dữ liệu gốc
-        df_processed: DataFrame dữ liệu đã xử lý
-    """
-    # Lấy các cột volume
-    volume_columns = [col for col in df_original.columns if 'volume' in col.lower()]
-    if not volume_columns:
-        return
-    
-    # Vẽ biểu đồ volume theo thời gian
-    plt.figure(figsize=(15, 10))
-    
-    # Vẽ dữ liệu gốc
-    plt.subplot(2, 1, 1)
-    for col in volume_columns:
-        plt.plot(df_original.index, df_original[col], label=f'{col} (Gốc)')
-    plt.title('Volume theo thời gian (Dữ liệu gốc)')
-    plt.xlabel('Thời gian')
-    plt.ylabel('Volume')
-    plt.legend()
-    
-    # Vẽ dữ liệu đã xử lý
-    plt.subplot(2, 1, 2)
-    for col in volume_columns:
-        plt.plot(df_processed.index, df_processed[col], label=f'{col} (Đã xử lý)')
-    plt.title('Volume theo thời gian (Dữ liệu đã xử lý)')
-    plt.xlabel('Thời gian')
-    plt.ylabel('Volume (Chuẩn hóa)')
-    plt.legend()
-    
-    plt.tight_layout()
-    plt.show()
-    
-    # Vẽ biểu đồ phân phối volume
-    plt.figure(figsize=(15, 10))
-    
-    # Vẽ phân phối dữ liệu gốc
-    for i, col in enumerate(volume_columns, 1):
-        plt.subplot(2, len(volume_columns), i)
-        sns.histplot(data=df_original, x=col)
-        plt.title(f'Phân phối {col} (Gốc)')
-    
-    # Vẽ phân phối dữ liệu đã xử lý
-    for i, col in enumerate(volume_columns, 1):
-        plt.subplot(2, len(volume_columns), i + len(volume_columns))
-        sns.histplot(data=df_processed, x=col)
-        plt.title(f'Phân phối {col} (Đã xử lý)')
-    
-    plt.tight_layout()
-    plt.show()
-    
-    # Vẽ biểu đồ box plot
-    plt.figure(figsize=(15, 10))
-    
-    # Vẽ box plot dữ liệu gốc
-    plt.subplot(2, 1, 1)
-    df_original[volume_columns].boxplot()
-    plt.title('Box Plot Volume (Dữ liệu gốc)')
-    plt.xticks(rotation=45)
-    
-    # Vẽ box plot dữ liệu đã xử lý
-    plt.subplot(2, 1, 2)
-    df_processed[volume_columns].boxplot()
-    plt.title('Box Plot Volume (Dữ liệu đã xử lý)')
-    plt.xticks(rotation=45)
-    
-    plt.tight_layout()
-    plt.savefig(plots_dir / f"{file_name}_volume_boxplot.png")
-    plt.close()
-    plt.show()
-
-def save_processed_data(df, output_path):
-    """
-    Lưu dữ liệu đã xử lý
-    Args:
-        df: DataFrame cần lưu
-        output_path: đường dẫn để lưu file
-    """
-    try:
-        df.to_csv(output_path, index=True)
-        print(f"\nĐã lưu dữ liệu đã xử lý tại: {output_path}")
-    except Exception as e:
-        print(f"Lỗi khi lưu file: {str(e)}")
+    def process_data(self):
+        """
+        Xử lý tất cả các file OBV trong thư mục
+        """
+        try:
+            for file_path in self.data_dir.glob('*_OBV_*.csv'):
+                # Lấy symbol từ tên file
+                symbol = file_path.stem.split('_')[0]
+                print(f"\nXử lý dữ liệu OBV cho {symbol}...")
+                
+                # Load dữ liệu
+                df = self.load_data(file_path)
+                if df is None:
+                    continue
+                
+                print(f"Đã tải dữ liệu: {len(df)} dòng")
+                
+                # Loại bỏ outliers
+                df_clean = self.remove_outliers(df)
+                print("Đã xử lý outliers")
+                
+                # Chuẩn hóa dữ liệu
+                df_normalized = self.normalize_data(df_clean)
+                print("Đã chuẩn hóa dữ liệu")
+                
+                # Lưu dữ liệu đã xử lý
+                output_file = self.processed_dir / f"{symbol}_OBV_processed.csv"
+                df_normalized.to_csv(output_file, index=False)
+                print(f"Đã lưu dữ liệu vào: {output_file}")
+                
+                # Tạo biểu đồ phân tích
+                print("Tạo biểu đồ phân tích...")
+                self.plot_analysis(df_normalized, symbol)
+                
+        except Exception as e:
+            print(f"Lỗi trong quá trình xử lý: {str(e)}")
 
 def main():
-    # Thiết lập thư mục
-    base_dir, processed_dir,plots_dir = setup_directories()
-    
-    # Tìm tất cả các file CSV trong thư mục
-    csv_files = list(base_dir.glob("*.csv"))
-    
-    if not csv_files:
-        print("\nKhông tìm thấy file CSV nào trong thư mục data/volume_data")
-        return
-    
-    # Xử lý từng file
-    for file_path in csv_files:
-        print(f"\nXử lý file: {file_path.name}")
-        
-        # Đọc dữ liệu
-        df_original = load_nasdaq_data(file_path)
-        if df_original is None:
-            continue
-        
-        # Làm sạch dữ liệu
-        df_processed = clean_nasdaq_data(df_original.copy())
-        
-        # Xử lý dữ liệu volume
-        df_processed = process_volume_data(df_processed)
-        
-        # Tạo biểu đồ
-        create_visualizations(df_original, df_processed, plots_dir, file_path.name)
-        
-        # Lưu dữ liệu đã xử lý
-        output_file = processed_dir / f"processed_{file_path.name}"
-        save_processed_data(df_processed, output_file)
-        
-        print(f"\nHoàn thành xử lý file: {file_path.name}")
+    processor = OBVDataProcessor(start_year=2004)
+    processor.process_data()
 
 if __name__ == "__main__":
     main()

@@ -178,29 +178,7 @@ def normalize_data(df):
     print("Data normalized successfully.")
     return df_normalized
 
-def calculate_technical_indicators(df):
-    """
-    Calculate basic technical indicators
-    """
-    print("\nCalculating technical indicators...")
-    df_tech = df.copy()
-    
-    # 1. Returns
-    df_tech['daily_return'] = df['close'].pct_change()
-    df_tech['log_return'] = np.log(df['close']/df['close'].shift(1))
-    
-    # 2. Volatility
-    df_tech['volatility'] = df_tech['daily_return'].rolling(window=20).std()
-    
-    # 3. Moving Averages
-    df_tech['MA5'] = df['close'].rolling(window=5).mean()
-    df_tech['MA20'] = df['close'].rolling(window=20).mean()
-    
-    # 4. Trading Range
-    df_tech['daily_range'] = df['high'] - df['low']
-    df_tech['daily_range_pct'] = df_tech['daily_range'] / df['close']
-    
-    return df_tech
+
 
 def visualize_preprocessing(original_df, processed_df, output_dir):
     """
@@ -306,14 +284,13 @@ def main():
     # Remove outliers
     df_clean, outlier_stats = remove_outliers(df)
     
-    # Calculate technical indicators
-    df_processed = calculate_technical_indicators(df_clean)
+    
     
     # Visualize preprocessing results
-    visualize_preprocessing(df, df_processed, plots_dir)
+    visualize_preprocessing(df, df_clean, plots_dir)
     
     # Save processed data
-    save_processed_data(df_processed, output_file)
+    save_processed_data(df_clean, output_file)
     
     print("\nData preprocessing completed successfully!")
 

@@ -51,7 +51,30 @@ def backfill_missing_data(df):
     df = df.fillna(method='ffill')
     df = df.fillna(method='bfill')
     return df
-
+def normalize_data(df, columns):
+    """
+    Chuẩn hóa dữ liệu bằng MinMaxScaler
+    """
+    from sklearn.preprocessing import MinMaxScaler
+    scaler = MinMaxScaler()
+    
+    df_normalized = df.copy()
+    df_normalized[columns] = scaler.fit_transform(df[columns])
+    return df_normalized
+def calculate_statistics(df):
+    """
+    Tính toán và hiển thị các chỉ số thống kê cơ bản
+    """
+    stats = df.describe()
+    skewness = df.skew()
+    kurtosis = df.kurtosis()
+    
+    print("\nThống kê cơ bản:")
+    print(stats)
+    print("\nĐộ lệch (Skewness):")
+    print(skewness)
+    print("\nĐộ nhọn (Kurtosis):")
+    print(kurtosis)
 def plot_price_comparison(original_df, processed_df):
     """
     Plot price comparison before and after processing
@@ -112,17 +135,23 @@ def process_aapl_data():
     data_dir = Path('data/price_data')
     input_file = data_dir / 'AAPL_daily.csv'
     base_dir = Path('data/processed_data')
-    output_file = base_dir / 'AAPL_daily_processed.csv'
+    output_file = base_dir / 'processed_AAPL_daily.csv'
+    
+    # Tạo thư mục nếu chưa tồn tại
+    base_dir.mkdir(parents=True, exist_ok=True)
     
     # Load data
     print("Loading data...")
     original_df = load_data(input_file)
     
-    # Display initial data info
+    # Hiển thị thông tin ban đầu
     print("\nInitial data info (2004-Present):")
     print(original_df.info())
     print("\nMissing values:")
     print(original_df.isnull().sum())
+    
+    # Tính toán thống kê ban đầu
+    calculate_statistics(original_df)
     
     # Plot initial data visualizations
     print("\nGenerating initial data visualizations...")
@@ -130,6 +159,7 @@ def process_aapl_data():
     
     # Create a copy for processing
     processed_df = original_df.copy()
+    
     
     # Handle outliers
     print("\nHandling outliers...")
@@ -140,9 +170,14 @@ def process_aapl_data():
     print("\nBackfilling missing data...")
     processed_df = backfill_missing_data(processed_df)
     
+    # Chuẩn hóa dữ liệu
+    print("\nNormalizing data...")
+    processed_df = normalize_data(processed_df, numeric_columns)
+    
     # Display final data info
     print("\nFinal data info:")
     print(processed_df.info())
+    calculate_statistics(processed_df)
     
     # Plot comparison visualizations
     print("\nGenerating comparison visualizations...")
