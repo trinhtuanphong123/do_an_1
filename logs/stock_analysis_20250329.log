@@ -1,0 +1,32 @@
+2025-03-29 00:24:59,350 - INFO - 
+Processing AAPL
+2025-03-29 00:25:00,164 - ERROR - No daily data found for AAPL
+2025-03-29 00:25:00,165 - INFO - 
+Fetching all technical indicators for AAPL
+2025-03-29 00:25:01,994 - INFO - Saved SMA 20 data for AAPL
+2025-03-29 00:25:01,995 - INFO - Successfully retrieved SMA 20 for AAPL
+2025-03-29 00:25:13,896 - INFO - Saved SMA 50 data for AAPL
+2025-03-29 00:25:13,897 - INFO - Successfully retrieved SMA 50 for AAPL
+2025-03-29 00:25:26,061 - INFO - Saved SMA 200 data for AAPL
+2025-03-29 00:25:26,062 - INFO - Successfully retrieved SMA 200 for AAPL
+2025-03-29 00:25:37,895 - INFO - Saved RSI data for AAPL
+2025-03-29 00:25:37,895 - INFO - Successfully retrieved RSI for AAPL
+2025-03-29 00:26:02,570 - INFO - Saved Bollinger Bands data for AAPL
+2025-03-29 00:26:02,586 - INFO - Successfully retrieved Bollinger Bands for AAPL
+2025-03-29 00:26:02,586 - INFO - Completed processing AAPL
+2025-03-29 00:32:01,598 - INFO - 
+Processing AAPL
+2025-03-29 00:32:02,393 - ERROR - No daily data found for AAPL
+2025-03-29 00:32:02,394 - INFO - 
+Fetching all technical indicators for AAPL
+2025-03-29 00:32:05,267 - INFO - Saved SMA 20 data for AAPL
+2025-03-29 00:32:05,268 - INFO - Successfully retrieved SMA 20 for AAPL
+2025-03-29 00:32:16,093 - INFO - Saved SMA 50 data for AAPL
+2025-03-29 00:32:16,094 - INFO - Successfully retrieved SMA 50 for AAPL
+2025-03-29 00:32:28,354 - INFO - Saved SMA 200 data for AAPL
+2025-03-29 00:32:28,355 - INFO - Successfully retrieved SMA 200 for AAPL
+2025-03-29 00:32:40,209 - INFO - Saved RSI data for AAPL
+2025-03-29 00:32:40,210 - INFO - Successfully retrieved RSI for AAPL
+2025-03-29 00:33:04,824 - INFO - Saved Bollinger Bands data for AAPL
+2025-03-29 00:33:04,824 - INFO - Successfully retrieved Bollinger Bands for AAPL
+2025-03-29 00:33:04,825 - INFO - Completed processing AAPL

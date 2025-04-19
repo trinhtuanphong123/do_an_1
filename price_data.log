@@ -1,0 +1,26 @@
+2025-03-29 00:34:43,575 - INFO - 
+Testing price data retrieval for AAPL
+2025-03-29 00:34:43,575 - INFO - Getting daily adjusted data for AAPL
+2025-03-29 00:34:43,575 - INFO - Making API request with params: {'function': 'TIME_SERIES_DAILY_ADJUSTED', 'symbol': 'AAPL', 'outputsize': 'full', 'apikey': '***'}
+2025-03-29 00:34:43,934 - INFO - Response status code: 200
+2025-03-29 00:34:43,935 - ERROR - No time series data found in response
+2025-03-29 00:34:43,935 - ERROR - Failed to retrieve data
+2025-03-29 00:34:55,868 - INFO - 
+Processing AAPL
+2025-03-29 00:34:55,868 - INFO - Getting daily adjusted data for AAPL
+2025-03-29 00:34:55,868 - INFO - Making API request with params: {'function': 'TIME_SERIES_DAILY_ADJUSTED', 'symbol': 'AAPL', 'outputsize': 'full', 'apikey': '***'}
+2025-03-29 00:34:56,650 - INFO - Response status code: 200
+2025-03-29 00:34:56,651 - ERROR - No time series data found in response
+2025-03-29 00:34:56,651 - INFO - 
+Fetching all technical indicators for AAPL
+2025-03-29 00:34:58,581 - INFO - Saved SMA 20 data for AAPL
+2025-03-29 00:34:58,582 - INFO - Successfully retrieved SMA 20 for AAPL
+2025-03-29 00:35:13,004 - INFO - Saved SMA 50 data for AAPL
+2025-03-29 00:35:13,005 - INFO - Successfully retrieved SMA 50 for AAPL
+2025-03-29 00:35:28,707 - INFO - Saved SMA 200 data for AAPL
+2025-03-29 00:35:28,708 - INFO - Successfully retrieved SMA 200 for AAPL
+2025-03-29 00:35:43,199 - INFO - Saved RSI data for AAPL
+2025-03-29 00:35:43,200 - INFO - Successfully retrieved RSI for AAPL
+2025-03-29 00:36:14,015 - INFO - Saved Bollinger Bands data for AAPL
+2025-03-29 00:36:14,016 - INFO - Successfully retrieved Bollinger Bands for AAPL
+2025-03-29 00:36:14,017 - INFO - Completed processing AAPL

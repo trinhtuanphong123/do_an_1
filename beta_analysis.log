@@ -1,0 +1,47 @@
+2025-03-29 00:45:17,297 - INFO - Analysis started at (UTC): 2025-03-28 17:45:17
+2025-03-29 00:45:17,297 - INFO - User: trinhtuanphong123
+2025-03-29 00:45:17,297 - INFO - 
+Analyzing Beta for AAPL
+2025-03-29 00:45:17,298 - INFO - Getting Beta for AAPL
+2025-03-29 00:45:17,298 - INFO - Requesting Beta data for AAPL
+2025-03-29 00:45:18,068 - INFO - Beta for AAPL: 1.178
+2025-03-29 00:45:18,068 - INFO - 
+Beta Analysis for AAPL:
+2025-03-29 00:45:18,068 - INFO - Beta: 1.178
+2025-03-29 00:45:18,068 - INFO - Volatility: More volatile than market
+2025-03-29 00:45:18,069 - INFO - Market Sensitivity: Amplified market movements
+2025-03-29 00:45:18,074 - INFO - Risk Level: Medium-High
+2025-03-29 00:45:33,074 - INFO - 
+Analyzing Beta for MSFT
+2025-03-29 00:45:33,074 - INFO - Getting Beta for MSFT
+2025-03-29 00:45:33,074 - INFO - Requesting Beta data for MSFT
+2025-03-29 00:45:33,832 - INFO - Beta for MSFT: 0.914
+2025-03-29 00:45:33,832 - INFO - 
+Beta Analysis for MSFT:
+2025-03-29 00:45:33,832 - INFO - Beta: 0.914
+2025-03-29 00:45:33,832 - INFO - Volatility: Less volatile than market
+2025-03-29 00:45:33,833 - INFO - Market Sensitivity: Dampened market movements
+2025-03-29 00:45:33,833 - INFO - Risk Level: Medium-Low
+2025-03-29 00:45:48,834 - INFO - 
+Analyzing Beta for GOOGL
+2025-03-29 00:45:48,834 - INFO - Getting Beta for GOOGL
+2025-03-29 00:45:48,834 - INFO - Requesting Beta data for GOOGL
+2025-03-29 00:45:49,621 - INFO - Beta for GOOGL: 1.025
+2025-03-29 00:45:49,621 - INFO - 
+Beta Analysis for GOOGL:
+2025-03-29 00:45:49,622 - INFO - Beta: 1.025
+2025-03-29 00:45:49,622 - INFO - Volatility: More volatile than market
+2025-03-29 00:45:49,622 - INFO - Market Sensitivity: Amplified market movements
+2025-03-29 00:45:49,622 - INFO - Risk Level: Medium-High
+2025-03-29 01:39:32,683 - INFO - Analysis started at (UTC): 2025-03-28 18:39:32
+2025-03-29 01:39:32,683 - INFO - User: trinhtuanphong123
+2025-03-29 01:39:32,683 - INFO - 
+Analyzing Beta for AAPL
+2025-03-29 01:39:32,683 - INFO - Getting Beta for AAPL
+2025-03-29 01:39:32,684 - INFO - Using cached Beta data for AAPL
+2025-03-29 01:39:32,684 - INFO - 
+Beta Analysis for AAPL:
+2025-03-29 01:39:32,684 - INFO - Beta: 1.178
+2025-03-29 01:39:32,684 - INFO - Volatility: More volatile than market
+2025-03-29 01:39:32,684 - INFO - Market Sensitivity: Amplified market movements
+2025-03-29 01:39:32,684 - INFO - Risk Level: Medium-High

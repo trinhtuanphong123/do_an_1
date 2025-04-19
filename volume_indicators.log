@@ -1,0 +1,76 @@
+2025-03-29 00:55:14,162 - INFO - 
+Analyzing OBV for AAPL
+2025-03-29 00:55:14,162 - INFO - Getting OBV data for AAPL
+2025-03-29 00:55:14,162 - INFO - UTC Time: 2025-03-28 17:55:14
+2025-03-29 00:55:14,162 - INFO - User: trinhtuanphong123
+2025-03-29 00:55:14,162 - INFO - Requesting OBV data for AAPL
+2025-03-29 00:55:16,513 - INFO - Saved OBV data to data\volume_data\AAPL_OBV_daily.csv
+2025-03-29 00:55:30,240 - INFO - 
+OBV Analysis Results:
+2025-03-29 00:55:30,240 - INFO - Symbol: AAPL
+2025-03-29 00:55:30,240 - INFO - Timestamp: 2025-03-27 00:00:00
+2025-03-29 00:55:30,240 - INFO - Current OBV: 96,526,923,135
+2025-03-29 00:55:30,246 - INFO - Short-term Trend: Up
+2025-03-29 00:55:30,246 - INFO - Long-term Trend: Down
+2025-03-29 00:55:30,246 - INFO - Momentum: 0.04%
+2025-03-29 00:55:30,246 - INFO - Divergence: None
+2025-03-29 00:55:30,246 - INFO - Interpretation: Mixed signals between short and long-term trends
+2025-03-29 00:55:30,247 - INFO - Momentum Analysis: Weak momentum
+2025-03-29 01:48:39,787 - INFO - 
+Analyzing OBV for AAPL
+2025-03-29 01:48:39,787 - INFO - Getting OBV data for AAPL
+2025-03-29 01:48:39,787 - INFO - UTC Time: 2025-03-28 18:48:39
+2025-03-29 01:48:39,787 - INFO - User: trinhtuanphong123
+2025-03-29 01:48:39,802 - INFO - Requesting OBV data for AAPL
+2025-03-29 01:48:40,641 - ERROR - No OBV data found in response
+2025-03-29 01:48:40,641 - ERROR - Failed to analyze AAPL: Failed to retrieve OBV data
+2025-03-29 01:51:09,210 - INFO - 
+Analyzing OBV for AAPL
+2025-03-29 01:51:09,210 - INFO - Getting OBV data for AAPL
+2025-03-29 01:51:09,210 - INFO - UTC Time: 2025-03-28 18:51:09
+2025-03-29 01:51:09,210 - INFO - User: trinhtuanphong123
+2025-03-29 01:51:09,224 - INFO - Requesting OBV data for AAPL
+2025-03-29 01:51:10,869 - ERROR - No OBV data found in response
+2025-03-29 01:51:10,870 - ERROR - Failed to analyze AAPL: Failed to retrieve OBV data
+2025-03-29 01:55:57,830 - INFO - 
+Analyzing OBV for AAPL
+2025-03-29 01:55:57,830 - INFO - Getting OBV data for AAPL
+2025-03-29 01:55:57,831 - INFO - UTC Time: 2025-03-28 18:55:57
+2025-03-29 01:55:57,831 - INFO - User: trinhtuanphong123
+2025-03-29 01:55:57,844 - INFO - Requesting OBV data for AAPL
+2025-03-29 01:55:58,678 - ERROR - No OBV data found in response
+2025-03-29 01:55:58,679 - ERROR - Failed to analyze AAPL: Failed to retrieve OBV data
+2025-03-29 01:56:13,680 - INFO - 
+Analyzing OBV for MSFT
+2025-03-29 01:56:13,680 - INFO - Getting OBV data for MSFT
+2025-03-29 01:56:13,680 - INFO - UTC Time: 2025-03-28 18:55:57
+2025-03-29 01:56:13,680 - INFO - User: trinhtuanphong123
+2025-03-29 01:56:13,681 - INFO - Requesting OBV data for MSFT
+2025-03-29 01:56:14,037 - ERROR - No OBV data found in response
+2025-03-29 01:56:14,038 - ERROR - Failed to analyze MSFT: Failed to retrieve OBV data
+2025-03-29 01:56:29,039 - INFO - 
+Analyzing OBV for GOOGL
+2025-03-29 01:56:29,040 - INFO - Getting OBV data for GOOGL
+2025-03-29 01:56:29,040 - INFO - UTC Time: 2025-03-28 18:55:57
+2025-03-29 01:56:29,040 - INFO - User: trinhtuanphong123
+2025-03-29 01:56:29,041 - INFO - Requesting OBV data for GOOGL
+2025-03-29 01:56:29,804 - ERROR - No OBV data found in response
+2025-03-29 01:56:29,804 - ERROR - Failed to analyze GOOGL: Failed to retrieve OBV data
+2025-03-30 10:15:09,353 - INFO - 
+Analyzing OBV for AAPL
+2025-03-30 10:15:09,353 - INFO - Getting OBV data for AAPL
+2025-03-30 10:15:09,355 - INFO - UTC Time: 2025-03-30 03:15:09
+2025-03-30 10:15:09,355 - INFO - User: trinhtuanphong123
+2025-03-30 10:15:09,375 - INFO - Requesting OBV data for AAPL
+2025-03-30 10:15:11,422 - INFO - Saved OBV data to data\volume_data\AAPL_OBV_daily.csv
+2025-03-30 10:15:25,396 - INFO - 
+OBV Analysis Results:
+2025-03-30 10:15:25,396 - INFO - Symbol: AAPL
+2025-03-30 10:15:25,403 - INFO - Timestamp: 2025-03-28 00:00:00
+2025-03-30 10:15:25,403 - INFO - Current OBV: 96,487,104,518
+2025-03-30 10:15:25,404 - INFO - Short-term Trend: Up
+2025-03-30 10:15:25,404 - INFO - Long-term Trend: Down
+2025-03-30 10:15:25,404 - INFO - Momentum: -0.04%
+2025-03-30 10:15:25,404 - INFO - Divergence: Bullish
+2025-03-30 10:15:25,405 - INFO - Interpretation: Mixed signals between short and long-term trends
+2025-03-30 10:15:25,405 - INFO - Momentum Analysis: Weak momentum

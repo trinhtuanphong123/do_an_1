@@ -1,0 +1,43 @@
+2025-03-29 01:12:27,936 - INFO - Initialized FinancialMetrics for user trinhtuanphong123 at 2025-03-28 18:06:47
+2025-03-29 01:12:27,942 - INFO - Saved session info to data\financial_metrics\session_20250328_180647.json
+2025-03-29 01:12:27,942 - INFO - 
+Processing AAPL
+2025-03-29 01:12:27,943 - INFO - Fetching earnings data for AAPL
+2025-03-29 01:12:28,964 - INFO - Saved quarterly earnings to data\financial_metrics\earnings\AAPL_quarterly_earnings.csv
+2025-03-29 01:12:28,967 - INFO - Saved annual earnings to data\financial_metrics\earnings\AAPL_annual_earnings.csv
+2025-03-29 01:12:28,967 - INFO - Retrieved 116 quarterly earnings records
+2025-03-29 01:12:28,968 - INFO - Retrieved 30 annual earnings records
+2025-03-29 01:12:28,968 - INFO - Fetching ATR data for AAPL
+2025-03-29 01:12:41,731 - INFO - Saved ATR data to data\financial_metrics\volatility\AAPL_ATR_daily.csv
+2025-03-29 01:12:41,732 - INFO - Retrieved 6376 ATR records
+2025-03-29 01:12:41,732 - INFO - Completed processing AAPL
+2025-03-29 01:12:41,732 - INFO - 
+Processing MSFT
+2025-03-29 01:12:41,732 - INFO - Fetching earnings data for MSFT
+2025-03-29 01:12:52,706 - WARNING - No quarterly earnings data found for MSFT
+2025-03-29 01:12:52,706 - WARNING - No annual earnings data found for MSFT
+2025-03-29 01:12:52,707 - INFO - Fetching ATR data for MSFT
+2025-03-29 01:13:08,898 - WARNING - No ATR data found for MSFT
+2025-03-29 01:13:08,900 - INFO - Completed processing MSFT
+2025-03-29 01:13:08,900 - INFO - 
+Processing GOOGL
+2025-03-29 01:13:08,900 - INFO - Fetching earnings data for GOOGL
+2025-03-29 01:13:16,711 - WARNING - No quarterly earnings data found for GOOGL
+2025-03-29 01:13:16,713 - WARNING - No annual earnings data found for GOOGL
+2025-03-29 01:13:16,713 - INFO - Fetching ATR data for GOOGL
+2025-03-29 01:13:28,709 - WARNING - No ATR data found for GOOGL
+2025-03-29 01:13:28,710 - INFO - Completed processing GOOGL
+2025-03-29 01:13:28,710 - INFO - 
+Data collection completed successfully
+2025-03-29 01:13:29,621 - INFO - Initialized FinancialMetrics for user trinhtuanphong123 at 2025-03-28 18:06:47
+2025-03-29 01:13:29,622 - INFO - Saved session info to data\financial_metrics\session_20250328_180647.json
+2025-03-29 01:13:29,622 - INFO - 
+Processing AAPL
+2025-03-29 01:13:29,622 - INFO - Fetching earnings data for AAPL
+2025-03-29 01:13:30,389 - WARNING - No quarterly earnings data found for AAPL
+2025-03-29 01:13:30,390 - WARNING - No annual earnings data found for AAPL
+2025-03-29 01:13:30,390 - INFO - Fetching ATR data for AAPL
+2025-03-29 01:13:42,380 - WARNING - No ATR data found for AAPL
+2025-03-29 01:13:42,381 - INFO - Completed processing AAPL
+2025-03-29 01:13:42,381 - INFO - 
+Data collection completed successfully

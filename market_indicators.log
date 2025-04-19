@@ -1,0 +1,16 @@
+2025-03-29 00:42:58,039 - INFO - 
+Testing NASDAQ index data:
+2025-03-29 00:42:58,039 - INFO - Getting market index data for NDAQ
+2025-03-29 00:43:00,258 - INFO - Saved index data to data\market_data\NDAQ_daily.csv
+2025-03-29 00:43:00,259 - INFO - Retrieved 5723 rows of index data
+2025-03-29 00:43:00,260 - INFO - Date range: 2002-07-01 00:00:00 to 2025-03-27 00:00:00
+2025-03-29 00:43:00,260 - INFO - 
+Testing beta for AAPL:
+2025-03-29 00:43:00,260 - INFO - Getting beta for AAPL
+2025-03-29 00:43:13,781 - INFO - Beta: 1.178
+2025-03-29 00:43:13,781 - INFO - 
+Testing market correlation for AAPL:
+2025-03-29 00:43:30,495 - INFO - Getting market index data for NDAQ
+2025-03-29 00:43:45,169 - INFO - Saved index data to data\market_data\NDAQ_daily.csv
+2025-03-29 00:43:45,185 - INFO - Correlation between AAPL and NDAQ: -0.0048
+2025-03-29 00:43:45,185 - INFO - Correlation: -0.0048
