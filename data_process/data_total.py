@@ -22,22 +22,72 @@ class DataIntegrator:
             # Chuyển đổi cột thời gian
             df[date_column] = pd.to_datetime(df[date_column])
             
-            # Đặt cột thời gian làm index
-            df.set_index(date_column, inplace=True)
-            
             # Chọn các cột cần thiết
             if isinstance(columns_to_use, str):
                 columns_to_use = [columns_to_use]
-            df = df[columns_to_use]
+            df = df[[date_column] + columns_to_use]
             
             # Lọc dữ liệu từ năm start_year
-            df = df[df.index.year >= self.start_year]
+            df = df[df[date_column].dt.year >= self.start_year]
+            
+            # Sắp xếp theo thời gian và loại bỏ các dòng trùng lặp
+            df = df.sort_values(date_column)
+            df = df.drop_duplicates(subset=[date_column], keep='first')
+            
+            # Đặt cột thời gian làm index
+            df.set_index(date_column, inplace=True)
             
             return df
             
         except Exception as e:
             print(f"Lỗi khi đọc file {file_path}: {str(e)}")
             return None
+
+    def backfill_timeseries(self, df):
+        """
+        Backfill dữ liệu theo phương pháp phù hợp cho dữ liệu tài chính
+        """
+        try:
+            # Tạo index date range đầy đủ
+            full_range = pd.date_range(start=df.index.min(), end=df.index.max(), freq='D')
+            
+            # Reindex với đầy đủ các ngày
+            df = df.reindex(full_range)
+            
+            # Forward fill trước (vì dữ liệu tài chính thường giữ giá trị của ngày giao dịch gần nhất)
+            df = df.fillna(method='ffill', limit=5)  # Giới hạn forward fill tối đa 5 ngày
+            
+            # Backward fill sau cho các giá trị đầu tiên nếu có
+            df = df.fillna(method='bfill', limit=5)  # Giới hạn backward fill tối đa 5 ngày
+            
+            # Nếu còn giá trị NaN, interpolate tuyến tính
+            df = df.interpolate(method='linear', limit=5)
+            
+            return df
+            
+        except Exception as e:
+            print(f"Lỗi trong quá trình backfill: {str(e)}")
+            return df
+
+    def add_weekday(self, df):
+        """
+        Thêm cột weekday cho biết thứ trong tuần
+        """
+        # Tạo map cho các thứ trong tuần
+        weekday_map = {
+            0: 'Monday',
+            1: 'Tuesday', 
+            2: 'Wednesday',
+            3: 'Thursday',
+            4: 'Friday',
+            5: 'Saturday',
+            6: 'Sunday'
+        }
+        
+        # Thêm cột weekday
+        df['weekday'] = df.index.weekday.map(weekday_map)
+        
+        return df
 
     def integrate_data(self):
         """
@@ -46,13 +96,13 @@ class DataIntegrator:
         # Dictionary chứa tên file và các cột cần lấy
         file_columns = {
             'processed_AAPL_daily.csv': ['close', 'volume'],
-            'processed_AAPL_RSI.csv': ['RSI_normalized'],
-            'processed_AAPL_BBANDS.csv': ['Real Middle Band '],
+            'processed_AAPL_rsi.csv': ['RSI_normalized'],
+            'processed_AAPL_BBANDS.csv': ['Real Middle Band'],
             'processed_AAPL_earnings_daily.csv': ['reportedEPS'],
             'processed_AAPL_ATR_daily.csv': ['atr'],
             'processed_NASDAQ_daily.csv': ['volume_nasdaq_normalized', 'close_nasdaq_normalized'],
             'processed_AAPL_obv.csv': ['obv_normalized'],
-            'processed_AAPL_vi_mo.csv': ['CPI_normalized', 'GDP_normalized']
+            'processed_vi_mo.csv': ['CPI_normalized', 'GDP_normalized']
         }
 
         all_dfs = []
@@ -76,20 +126,15 @@ class DataIntegrator:
         print("\nĐang tổng hợp dữ liệu...")
         merged_df = all_dfs[0]
         for df in all_dfs[1:]:
-            merged_df = merged_df.join(df, how='inner')
+            merged_df = merged_df.join(df, how='outer')
 
-        # Kiểm tra và xử lý dữ liệu thiếu
-        missing_count = merged_df.isnull().sum()
-        if missing_count.any():
-            print("\nSố lượng giá trị thiếu trong mỗi cột:")
-            print(missing_count)
-            
-            # Loại bỏ các dòng có giá trị thiếu
-            merged_df = merged_df.dropna()
-            print(f"\nSố dòng sau khi loại bỏ giá trị thiếu: {len(merged_df)}")
+        # Backfill dữ liệu thiếu
+        print("\nĐang backfill dữ liệu thiếu...")
+        merged_df = self.backfill_timeseries(merged_df)
 
-        # Sắp xếp theo thời gian
-        merged_df.sort_index(inplace=True)
+        # Thêm cột weekday
+        print("\nThêm thông tin weekday...")
+        merged_df = self.add_weekday(merged_df)
 
         # Reset index để đưa Timestamp thành cột
         merged_df.reset_index(inplace=True)
@@ -97,13 +142,16 @@ class DataIntegrator:
         # Đổi tên cột cho dễ hiểu
         merged_df = merged_df.rename(columns={
             'index': 'Timestamp',
-            'Middle Band': 'bbands_middle',
+            'Real Middle Band': 'bbands_middle',
             'close': 'price_close',
             'volume': 'price_volume'
         })
 
+        # Lọc chỉ giữ lại các ngày giao dịch (thứ 2 đến thứ 6)
+        merged_df = merged_df[~merged_df['weekday'].isin(['Saturday', 'Sunday'])]
+
         # Lưu kết quả
-        output_file = self.processed_dir / 'integrated_data.csv'
+        output_file = self.processed_dir / 'integrated_data_with_weekday.csv'
         merged_df.to_csv(output_file, index=False)
         print(f"\nĐã lưu dữ liệu tổng hợp vào: {output_file}")
         
@@ -115,12 +163,22 @@ class DataIntegrator:
         print("\nCác cột trong dữ liệu tổng hợp:")
         for col in merged_df.columns:
             print(f"- {col}")
+        
+        # In thông tin về phân bố các ngày trong tuần
+        print("\nPhân bố các ngày trong tuần:")
+        print(merged_df['weekday'].value_counts())
 
         return merged_df
 
 def main():
     integrator = DataIntegrator(start_year=2004)
     integrated_data = integrator.integrate_data()
+    
+    # In thêm một số thống kê về dữ liệu
+    if integrated_data is not None:
+        print("\nThống kê mô tả cho các cột số:")
+        numeric_cols = integrated_data.select_dtypes(include=[np.number]).columns
+        print(integrated_data[numeric_cols].describe())
 
 if __name__ == "__main__":
     main()
