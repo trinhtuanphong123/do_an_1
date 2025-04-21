@@ -73,19 +73,7 @@ def remove_outliers(df, threshold=3):
     
     return df_clean
 
-def normalize_data(df):
-    """
-    Normalize the data using StandardScaler
-    """
-    print("\nNormalizing data...")
-    scaler = StandardScaler()
-    df_normalized = pd.DataFrame(
-        scaler.fit_transform(df),
-        index=df.index,
-        columns=df.columns
-    )
-    print("Data normalized successfully.")
-    return df_normalized
+
 
 def check_stationarity(df):
     """
@@ -195,10 +183,9 @@ def process_sma_file(input_file, output_file, output_dir, sma_period):
     df_no_missing = handle_missing_values(df_filtered)
     
     # Remove outliers
-    df_clean = remove_outliers(df_no_missing)
+    df_normalized = remove_outliers(df_no_missing)
     
-    # Normalize data
-    df_normalized = normalize_data(df_clean)
+    
     
     # Check stationarity
     stationarity_results = check_stationarity(df_normalized)

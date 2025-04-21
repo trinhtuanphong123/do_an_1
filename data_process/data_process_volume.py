@@ -67,13 +67,7 @@ class OBVDataProcessor:
         
         return df_clean
 
-    def normalize_data(self, df):
-        """
-        Chuẩn hóa dữ liệu OBV về khoảng [0,1]
-        """
-        scaler = MinMaxScaler()
-        df['obv_normalized'] = scaler.fit_transform(df[['obv']])
-        return df
+    
 
     def plot_analysis(self, df, symbol):
         """
@@ -150,12 +144,10 @@ class OBVDataProcessor:
                 print(f"Đã tải dữ liệu: {len(df)} dòng")
                 
                 # Loại bỏ outliers
-                df_clean = self.remove_outliers(df)
+                df_normalized = self.remove_outliers(df)
                 print("Đã xử lý outliers")
                 
-                # Chuẩn hóa dữ liệu
-                df_normalized = self.normalize_data(df_clean)
-                print("Đã chuẩn hóa dữ liệu")
+                
                 
                 # Lưu dữ liệu đã xử lý
                 output_file = self.processed_dir / f"{symbol}_OBV_processed.csv"

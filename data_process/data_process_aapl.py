@@ -51,16 +51,7 @@ def backfill_missing_data(df):
     df = df.fillna(method='ffill')
     df = df.fillna(method='bfill')
     return df
-def normalize_data(df, columns):
-    """
-    Chuẩn hóa dữ liệu bằng MinMaxScaler
-    """
-    from sklearn.preprocessing import MinMaxScaler
-    scaler = MinMaxScaler()
-    
-    df_normalized = df.copy()
-    df_normalized[columns] = scaler.fit_transform(df[columns])
-    return df_normalized
+
 def calculate_statistics(df):
     """
     Tính toán và hiển thị các chỉ số thống kê cơ bản
@@ -172,7 +163,7 @@ def process_aapl_data():
     
     # Chuẩn hóa dữ liệu
     print("\nNormalizing data...")
-    processed_df = normalize_data(processed_df, numeric_columns)
+    
     
     # Display final data info
     print("\nFinal data info:")

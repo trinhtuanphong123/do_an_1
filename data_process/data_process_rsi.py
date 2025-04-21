@@ -127,35 +127,7 @@ class RSIDataProcessor:
         print(f"Dữ liệu sau khi làm sạch: {len(cleaned_df)} dòng")
         return cleaned_df
     
-    def normalize_data(self, df):
-        """
-        Chuẩn hóa dữ liệu RSI
-        Args:
-            df: DataFrame dữ liệu đã làm sạch
-        Returns:
-            DataFrame: dữ liệu đã được chuẩn hóa
-        """
-        if df is None or df.empty:
-            return None
-        
-        # Tạo bản sao để không ảnh hưởng đến dữ liệu gốc
-        normalized_df = df.copy()
-        
-        # Chuẩn hóa các cột số
-        numeric_cols = normalized_df.select_dtypes(include=[np.number]).columns
-        
-        for col in numeric_cols:
-            # Chuẩn hóa Min-Max để đưa về khoảng [0, 1]
-            min_val = normalized_df[col].min()
-            max_val = normalized_df[col].max()
-            
-            if max_val > min_val:  # Tránh chia cho 0
-                normalized_df[f"{col}_normalized"] = (normalized_df[col] - min_val) / (max_val - min_val)
-            else:
-                normalized_df[f"{col}_normalized"] = normalized_df[col]
-        
-        print(f"Dữ liệu sau khi chuẩn hóa có {len(normalized_df.columns)} cột")
-        return normalized_df
+    
     
     def visualize_data(self, original_df, processed_df, symbol):
         """
@@ -266,14 +238,12 @@ class RSIDataProcessor:
                 continue
         
         # Làm sạch dữ liệu
-            cleaned_df = self.clean_data(original_df)
-            if cleaned_df is None:
+            processed_df = self.clean_data(original_df)
+            if processed_df is None:
                 continue
         
         # Chuẩn hóa dữ liệu
-            processed_df = self.normalize_data(cleaned_df)
-            if processed_df is None:
-                continue
+           
         
         # Kiểm tra lại một lần nữa để đảm bảo chỉ có dữ liệu từ 2004
             if isinstance(processed_df.index, pd.DatetimeIndex):

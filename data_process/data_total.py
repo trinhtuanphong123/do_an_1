@@ -96,13 +96,14 @@ class DataIntegrator:
         # Dictionary chứa tên file và các cột cần lấy
         file_columns = {
             'processed_AAPL_daily.csv': ['close', 'volume'],
-            'processed_AAPL_rsi.csv': ['RSI_normalized'],
+            'processed_AAPL_rsi.csv': ['RSI'],
             'processed_AAPL_BBANDS.csv': ['Real Middle Band'],
             'processed_AAPL_earnings_daily.csv': ['reportedEPS'],
             'processed_AAPL_ATR_daily.csv': ['atr'],
-            'processed_NASDAQ_daily.csv': ['volume_nasdaq_normalized', 'close_nasdaq_normalized'],
-            'processed_AAPL_obv.csv': ['obv_normalized'],
-            'processed_vi_mo.csv': ['CPI_normalized', 'GDP_normalized']
+            'processed_NASDAQ_daily.csv': ['volume_nasdaq', 'close_nasdaq'],
+            'processed_AAPL_obv.csv': ['obv'],
+            'processed_AAPL_vi_mo.csv': ['CPI', 'GDP'],
+            'processed_AAPL_SMA_50.csv':['SMA_50']
         }
 
         all_dfs = []

@@ -65,15 +65,7 @@ class MacroDataProcessor:
         df[column] = df[column].clip(lower=lower_bound, upper=upper_bound)
         return df
 
-    def normalize_data(self, df):
-        """Chuẩn hóa dữ liệu về khoảng [0,1]"""
-        scaler = MinMaxScaler()
-        df_normalized = pd.DataFrame(
-            scaler.fit_transform(df),
-            columns=df.columns,
-            index=df.index
-        )
-        return df_normalized
+    
 
     def process_data(self):
         """Xử lý toàn bộ dữ liệu"""
@@ -94,16 +86,13 @@ class MacroDataProcessor:
         cpi_daily = self.remove_outliers(cpi_daily, 'CPIAUCSL')
         gdp_daily = self.remove_outliers(gdp_daily, 'GDP')
         
-        # Chuẩn hóa dữ liệu
-        print("\nNormalizing data...")
-        cpi_normalized = self.normalize_data(cpi_daily)
-        gdp_normalized = self.normalize_data(gdp_daily)
+        
         
         # Merge dữ liệu
         print("\nMerging data...")
         merged_data = pd.concat([
-            cpi_normalized.rename(columns={'CPIAUCSL': 'CPI_normalized'}),
-            gdp_normalized.rename(columns={'GDP': 'GDP_normalized'})
+            cpi_daily.rename(columns={'CPIAUCSL': 'CPI_normalized'}),
+            gdp_daily.rename(columns={'GDP': 'GDP_normalized'})
         ], axis=1)
         
         # Thêm dữ liệu gốc

@@ -30,7 +30,7 @@ class NASDAQDataProcessor:
             df = pd.read_csv(file_path)
             
             # Chuyển đổi timestamp
-            df['Timestamp'] = pd.to_datetime(df['timestamp'])
+            df['Timestamp'] = pd.to_datetime(df['Timestamp'])
             
             # Chọn và đổi tên các cột cần thiết
             df_selected = df[['Timestamp', 'volume', 'close']]
@@ -86,41 +86,28 @@ class NASDAQDataProcessor:
         df_filled = df_filled.fillna(method='ffill')
         return df_filled
 
-    def normalize_data(self, df, columns):
-        """
-        Chuẩn hóa dữ liệu về khoảng [0,1]
-        """
-        scaler = MinMaxScaler()
-        df_normalized = df.copy()
-        
-        # Chuẩn hóa từng cột
-        for column in columns:
-            df_normalized[f"{column}_normalized"] = scaler.fit_transform(df[[column]])
-            
-        return df_normalized
-
     def plot_analysis(self, df, save_dir=None):
         """
-        Tạo các biểu đồ phân tích
+        Tạo các biểu đồ phân tích (phiên bản không chuẩn hóa)
         """
         # 1. Time Series Plot cho Volume và Close
         plt.figure(figsize=(15, 10))
         
         plt.subplot(2, 1, 1)
-        plt.plot(df['Timestamp'], df['volume_nasdaq_normalized'], 
-                label='Volume (normalized)', color='blue')
-        plt.title('Normalized NASDAQ Volume')
+        plt.plot(df['Timestamp'], df['volume_nasdaq'], 
+                label='Volume', color='blue')
+        plt.title('NASDAQ Volume')
         plt.xlabel('Date')
-        plt.ylabel('Normalized Value')
+        plt.ylabel('Volume')
         plt.legend()
         plt.grid(True)
         
         plt.subplot(2, 1, 2)
-        plt.plot(df['Timestamp'], df['close_nasdaq_normalized'], 
-                label='Close Price (normalized)', color='red')
-        plt.title('Normalized NASDAQ Close Price')
+        plt.plot(df['Timestamp'], df['close_nasdaq'], 
+                label='Close Price', color='red')
+        plt.title('NASDAQ Close Price')
         plt.xlabel('Date')
-        plt.ylabel('Normalized Value')
+        plt.ylabel('Price')
         plt.legend()
         plt.grid(True)
         
@@ -131,33 +118,33 @@ class NASDAQDataProcessor:
         plt.figure(figsize=(15, 6))
         
         plt.subplot(1, 2, 1)
-        sns.histplot(data=df, x='volume_nasdaq_normalized', kde=True)
+        sns.histplot(data=df, x='volume_nasdaq', kde=True)
         plt.title('Volume Distribution')
         
         plt.subplot(1, 2, 2)
-        sns.histplot(data=df, x='close_nasdaq_normalized', kde=True)
+        sns.histplot(data=df, x='close_nasdaq', kde=True)
         plt.title('Close Price Distribution')
         
         plt.tight_layout()
         plt.show()
 
-        # 3. Box Plots for Original vs Normalized Data
+        # 3. Box Plats chỉ hiển thị dữ liệu gốc
         plt.figure(figsize=(15, 6))
         
         plt.subplot(1, 2, 1)
-        df.boxplot(column=['volume_nasdaq', 'volume_nasdaq_normalized'])
-        plt.title('Volume: Original vs Normalized')
+        df.boxplot(column=['volume_nasdaq'])
+        plt.title('Volume Distribution')
         
         plt.subplot(1, 2, 2)
-        df.boxplot(column=['close_nasdaq', 'close_nasdaq_normalized'])
-        plt.title('Close Price: Original vs Normalized')
+        df.boxplot(column=['close_nasdaq'])
+        plt.title('Close Price Distribution')
         
         plt.tight_layout()
         plt.show()
 
     def process_data(self):
         """
-        Xử lý toàn bộ dữ liệu
+        Xử lý toàn bộ dữ liệu (phiên bản không chuẩn hóa)
         """
         # Load dữ liệu
         file_path = self.data_dir / 'NDAQ_daily.csv'
@@ -177,20 +164,16 @@ class NASDAQDataProcessor:
         df_clean = self.remove_outliers(df, columns_to_process)
         print("Đã xử lý outliers")
         
-        # Chuẩn hóa dữ liệu
-        df_normalized = self.normalize_data(df_clean, columns_to_process)
-        print("Đã chuẩn hóa dữ liệu")
-        
         # Lưu dữ liệu đã xử lý
         output_file = self.processed_dir / 'processed_NASDAQ_daily.csv'
-        df_normalized.to_csv(output_file, index=True)
+        df_clean.to_csv(output_file, index=True)
         print(f"Đã lưu dữ liệu vào: {output_file}")
         
         # Tạo biểu đồ phân tích
         print("Tạo biểu đồ phân tích...")
-        self.plot_analysis(df_normalized)
+        self.plot_analysis(df_clean)
         
-        return df_normalized
+        return df_clean
 
 def main():
     processor = NASDAQDataProcessor(start_year=2004)
